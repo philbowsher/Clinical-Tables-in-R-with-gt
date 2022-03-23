@@ -8,10 +8,10 @@ library(assertthat)
 
 library(safetyData)
 
+# source('~/CDISC_pilot_replication/programs/config.R')
 
 
-source('~/CDISC_pilot_replication/programs/config.R')
-source('~/CDISC_pilot_replication/programs/funcs.R')
+source('~/Clinical-Tables-in-R-with-gt/data_workflow/funcs.R')
 
 the_date <- as.character(Sys.Date())
 
@@ -269,7 +269,7 @@ tab_html <- final %>%
     align = "left")
 # output the HTML table
 tab_html %>%
-  gtsave("efficacy.html", path = "~/CDISC_pilot_replication/data/" )
+  gtsave("efficacy.pdf", path = "~/Clinical-Tables-in-R-with-gt/data_workflow/" )
 
 
 
