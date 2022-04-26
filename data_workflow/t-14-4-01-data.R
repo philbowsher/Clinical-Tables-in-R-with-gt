@@ -3,7 +3,7 @@
 
 library(glue)
 library(tidyverse)
-library(haven)
+# library(haven)
 library(assertthat)
 library(pharmaRTF)
 
