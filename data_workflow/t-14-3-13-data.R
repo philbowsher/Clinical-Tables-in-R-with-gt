@@ -5,12 +5,11 @@ library(glue)
 library(tidyverse)
 library(haven)
 library(assertthat)
+
 library(safetyData)
 
-
-
-source('~/CDISC_pilot_replication/programs/config.R')
-source('~/CDISC_pilot_replication/programs/funcs.R')
+# source('./programs/config.R')
+source('~/Clinical-Tables-in-R-with-gt/data_workflow/funcs.R')
 
 the_date <- as.character(Sys.Date())
 
@@ -30,6 +29,7 @@ ord <- tibble(
 )
 
 # Read in the CBIC dataset ----
+
 # read_xpt(glue("{adam_lib}/adcibc.xpt")) %>%
 cbic <- adam_adqscibc %>%
   filter(EFFFL == 'Y' & ITTFL == 'Y', AVISITN %in% c(8, 16, 24) & ANL01FL=='Y') %>%
@@ -125,101 +125,9 @@ counts[(counts$AVISITN==24 & counts$ord==0),'p'] <- cbic %>%
 final <- bind_rows(column_headers, counts) %>%
   select(AVISIT, AVALC, `0`,`54`,`81`, p)
 
+write_csv(final, "~/Clinical-Tables-in-R-with-gt/data/final_14313.csv")
 
 
-
-
-
-library(gt)
-
-final %>%
-  gt(groupname_col="block") 
-
-
-# use gt to do the reporting
-tab_html <- final %>%
-  gt(groupname_col="block") %>%
-  
-  tab_header(
-    title = "Table 14.2.13",
-    subtitle = "CIBIC+ - Categorical Analysis - LOCF"
-  ) %>%
-  
-  tab_source_note(
-    source_note = "[1]: [1] Overall comparison of treatments using CMH test (Pearson Chi-Square), controlling for site group."
-  ) %>%
-  
-  
-  tab_source_note(
-    source_note = paste('Program Source: 14-2.01.R Executed:
-(Draft)', the_date)) %>%
-  
-  
-  # cols_label(
-  # catlabel= " ",
-  # GroupA = paste0("Group A (N=", bign[1], ")"),
-  # GroupB = paste0("Group B (N=", bign[2], ")"),
-  # GroupC = paste0("Group C (N=", bign[3], ")")) %>%
-  
-  tab_options(
-    table.border.top.color = "white",
-    heading.border.bottom.color = "black",
-    table.border.bottom.color = "white",
-    table_body.border.bottom.color = "black",
-    table_body.hlines.color = "white",
-    row_group.border.bottom.color = "white",
-    row_group.border.top.color = "white",
-    column_labels.border.top.color = "black",
-    column_labels.border.bottom.color = "black",) %>%
-  
-  cols_align(
-    align = "left")
-# output the HTML table
-tab_html %>%
-  gtsave("14-3.13.html", path = "~/CDISC_pilot_replication/data/" )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Create the table
-
-# Make the table
-ht <- as_hux(final) %>%
-  huxtable::set_bold(1, 1:ncol(final), TRUE) %>%
-  huxtable::set_align(1, 1:ncol(final), 'center') %>%
-  huxtable::set_align(1,2, 'left') %>%
-  huxtable::set_valign(1, 1:ncol(final), 'bottom') %>%
-  huxtable::set_bottom_border(1, 1:ncol(final), 1) %>%
-  huxtable::set_width(1.2) %>%
-  huxtable::set_escape_contents(FALSE) %>%
-  huxtable::set_col_width(c(1/8, 3/8, 1/8, 1/8, 1/8, 1/8))
-ht
-
-# Write into doc object and pull titles/footnotes from excel file
-doc <- rtf_doc(ht) %>% titles_and_footnotes_from_df(
-  from.file='./data/titles.xlsx',
-  reader=example_custom_reader,
-  table_number='14-3.13') %>%
-  set_font_size(10) %>%
-  set_ignore_cell_padding(TRUE) %>%
-  set_column_header_buffer(top=1)
-
-# Write out the RTF
-write_rtf(doc, file='./outputs/14-3.13.rtf')
 
 
 

@@ -1,0 +1,17 @@
+rowlbl1,rowlbl2,0_C,54_C,81_C,0_S,54_S,81_S
+NA,NA,Completers at Week 24,NA,NA,Safety Population [1],NA,NA
+,NA,Placebo\line (N=60),Xanomeline\line Low Dose\line (N=28),Xanomeline\line High Dose\line (N=30),Placebo\line (N=86),Xanomeline\line Low Dose\line (N=84),Xanomeline\line High Dose\line (N=84)
+Average daily dose (mg),n,   60     ,   28     ,   30     ,   86     ,   84     ,   84     
+,Mean,    0.0   ,   54.0   ,   77.0   ,    0.0   ,   54.0   ,   71.6   
+,SD,    0.00  ,    0.00  ,    0.58  ,    0.00  ,    0.00  ,    8.11  
+,Median,    0.0   ,   54.0   ,   76.9   ,    0.0   ,   54.0   ,   75.1   
+,Min,    0.0   ,   54.0   ,   76.1   ,    0.0   ,   54.0   ,   54.0   
+,Max,    0.0   ,   54.0   ,   78.6   ,    0.0   ,   54.0   ,   78.6   
+,,,,,,,
+Cumulative dose at end of study [2],n,   60     ,   28     ,   30     ,   86     ,   84     ,   84     
+,Mean,    0.0   , 9918.6   ,14089.5   ,    0.0   , 5347.3   , 7551.0   
+,SD,    0.00  ,  603.84  ,  481.01  ,    0.00  , 3680.35  , 5531.04  
+,Median,    0.0   , 9936.0   ,14080.5   ,    0.0   , 4455.0   , 5778.0   
+,Min,    0.0   , 7884.0   ,12960.0   ,    0.0   ,  108.0   ,   54.0   
+,Max,    0.0   ,11448.0   ,15417.0   ,    0.0   ,11448.0   ,15417.0   
+,,,,,,,

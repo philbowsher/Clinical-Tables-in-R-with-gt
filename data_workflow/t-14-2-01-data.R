@@ -8,8 +8,7 @@ library(assertthat)
 
 library(safetyData)
 
-# source('~/CDISC_pilot_replication/programs/config.R')
-
+# source('~/CDISC_pilot_replication/programs/config.R')adsl <- read_xpt("~/CDISC_pilot_replication/data/adam/adsl.xpt")
 
 source('~/Clinical-Tables-in-R-with-gt/data_workflow/funcs.R')
 
@@ -218,58 +217,7 @@ header_n_v <- header_n %>% select(TRT01PN, labels) %>%
 final <- bind_rows(header_n_v, final) %>%
   select(rowlbl1, rowlbl2, `0`, `54`, `81`, `99`, p)
 
-
-
-
-
-
-library(gt)
-
-final %>%
-  gt(groupname_col="block") 
-
-
-# use gt to do the reporting
-tab_html <- final %>%
-  gt(groupname_col="block") %>%
-  
-  tab_header(
-    title = "Table 14.2.0",
-    subtitle = "Summary of Demographic and Baseline Characteristics"
-  ) %>%
-  
-  tab_source_note(
-    source_note = "[1]: P-values are results of ANOVA treatment group comparison for continuous variable and Pearson's chisquare test for categorical variables."
-  ) %>%
-  
-  
-  tab_source_note(
-    source_note = paste('Program Source: 14-2.01.R Executed:
-(Draft)', the_date)) %>%
-
-
-# cols_label(
-# catlabel= " ",
-# GroupA = paste0("Group A (N=", bign[1], ")"),
-# GroupB = paste0("Group B (N=", bign[2], ")"),
-# GroupC = paste0("Group C (N=", bign[3], ")")) %>%
-  
-  tab_options(
-    table.border.top.color = "white",
-    heading.border.bottom.color = "black",
-    table.border.bottom.color = "white",
-    table_body.border.bottom.color = "black",
-    table_body.hlines.color = "white",
-    row_group.border.bottom.color = "white",
-    row_group.border.top.color = "white",
-    column_labels.border.top.color = "black",
-    column_labels.border.bottom.color = "black",) %>%
-  
-  cols_align(
-    align = "left")
-# output the HTML table
-tab_html %>%
-  gtsave("efficacy.pdf", path = "~/Clinical-Tables-in-R-with-gt/data_workflow/" )
+write_csv(final, "~/Clinical-Tables-in-R-with-gt/data/final_14201.csv")
 
 
 
