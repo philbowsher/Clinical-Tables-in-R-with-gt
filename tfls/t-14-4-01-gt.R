@@ -1,6 +1,8 @@
 library(gt)
 library(readr)
 
+the_date <- as.character(Sys.Date())
+
 final_14401 <- read_csv("~/Clinical-Tables-in-R-with-gt/data/final_14401.csv")
 
 final_14401 %>%

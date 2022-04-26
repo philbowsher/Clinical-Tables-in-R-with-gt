@@ -3,12 +3,12 @@ library(readr)
 
 final_14309 <- read_csv("~/Clinical-Tables-in-R-with-gt/data/final_14309.csv")
 
-final %>%
+final_14309 %>%
   gt(groupname_col="block") 
 
 
 # use gt to do the reporting
-tab_html <- final %>%
+tab_html <- final_14309 %>%
   gt(groupname_col="block") %>%
   
   tab_header(
@@ -44,7 +44,9 @@ tab_html <- final %>%
     column_labels.border.bottom.color = "black",) %>%
   
   cols_align(
-    align = "left")
+    align = "left") %>% 
+  fmt_missing(columns = everything(), missing_text = "")
+
 # output the HTML table
 tab_html %>%
   gtsave("14-3-09.html", path = "~/Clinical-Tables-in-R-with-gt/tfls/" )
