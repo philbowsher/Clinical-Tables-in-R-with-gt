@@ -1,0 +1,117 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(gt)
+library(readr)
+```
+
+## Data preparation work before generating the summary table
+
+Import the data table.
+
+```{r}
+tbl <- read_rds(file = "data-14_2_01.rds")
+```
+
+Take a look at the structure of the table.
+
+```{r}
+tbl
+```
+
+Get the current date with the `Sys.Date()` function.
+
+```{r}
+reporting_date <- as.character(Sys.Date())
+```
+
+Get the row with the *N* values.
+
+```{r}
+n_values_row <- tbl %>% filter(category == "Age (y)")
+```
+
+Pull each of the *N* values for the required columns.
+
+```{r}
+placebo_n <- n_values_row %>% pull(placebo)
+xanomeline_ld_n <- n_values_row %>% pull(xanomeline_ld)
+xanomeline_hd_n <- n_values_row %>% pull(xanomeline_hd)
+total_n <- n_values_row %>% pull(total)
+```
+
+Add in a footnote from an external Excel file (here, called `titles.xlsx`).
+
+```{r}
+# Get the table that contains all text for different table types
+titles <- readxl::read_xlsx("data/titles.xlsx")
+
+# Extract the footnote text for the p-value column
+p_footnote <-
+  titles %>%
+  filter(table_number == "14-2.01" & type == "footnote" & index == 1) %>%
+  pull(text1)
+```
+
+
+## Summary table generation with **gt**
+
+This is the final table.
+
+```{r}
+gt_table <-
+  tbl %>%
+  gt() %>%
+  tab_header(
+    title = "Table 14.2.01",
+    subtitle = "Summary of Demographic and Baseline Characteristics",
+    preheader = c("Protocol: CDISCPILOT01", "Population: Intent-to-Treat")
+  ) %>%
+  fmt_missing(columns = everything(), missing_text = "") %>%
+  fmt_number(
+    columns = c(placebo, xanomeline_ld, xanomeline_hd, total),
+    rows = label %in% c("Mean", "SD", "Median", "Min", "Max"),
+    n_sigfig = 3
+  ) %>%
+  fmt_number(columns = p, decimals = 4) %>%
+  fmt_percent(
+    columns = ends_with("_pct"),
+    decimals = 0,
+    scale_values = FALSE
+  ) %>%
+  cols_merge_n_pct(col_n = placebo, col_pct = placebo_pct) %>%
+  cols_merge_n_pct(col_n = xanomeline_ld, col_pct = xanomeline_ld_pct) %>%
+  cols_merge_n_pct(col_n = xanomeline_hd, col_pct = xanomeline_hd_pct) %>%
+  cols_merge_n_pct(col_n = total, col_pct = total_pct) %>%
+  cols_label(
+    placebo  = md(paste0("Placebo  \n(N=", placebo_n, ")")),
+    xanomeline_ld = md(paste0("Xanomeline  \nLow Dose  \n(N=", xanomeline_ld_n, ")")),
+    xanomeline_hd = md(paste0("Xanomeline  \nHigh Dose  \n(N=", xanomeline_hd_n, ")")),
+    total = md(paste0("Total  \n(N=", total_n, ")")),
+    p = "p-value[1]"
+  ) %>%
+  tab_footnote(footnote = p_footnote) %>%
+  tab_source_note(
+    source_note = paste('Program Source: 14-2.01.R     Executed: (Draft)', reporting_date)
+  ) %>%
+  cols_width(
+    1 ~ pct(25),
+    2 ~ pct(20)
+  ) %>%
+  tab_options(
+    page.orientation = "landscape",
+    page.numbering = TRUE,
+    page.header.use_tbl_headings = TRUE,
+    page.footer.use_tbl_notes = TRUE
+  )
+```
+
+Write the **gt** table to an RTF document.
+
+```{r}
+gt_table %>% gtsave("tbl_14.2.01.rtf")
+```

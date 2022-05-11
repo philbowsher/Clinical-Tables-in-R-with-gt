@@ -1,0 +1,27 @@
+category,label,placebo,placebo_pct,xanomeline_ld,xanomeline_ld_pct,xanomeline_hd,xanomeline_hd_pct,p
+Week 8,n,77,,81,,73,,0.27272727272
+,Marked improvement,0,,0,,0,,
+,Moderate improvement,1,1,2,2,1,1,
+,Minimal improvement,19,25,16,20,13,18,
+,No Change,45,58,48,59,38,52,
+,Minimal worsening,10,13,14,17,20,27,
+,Moderate worsening,2,3,1,1,1,1,
+,Marked worsening,0,,0,,0,,
+,,,,,,,,
+Week 16,n,79,,81,,74,,0.4003023
+,Marked improvement,0,,0,,0,,
+,Moderate improvement,0,,3,4,2,3,
+,Minimal improvement,12,15,12,15,13,18,
+,No Change,41,52,46,57,39,53,
+,Minimal worsening,25,32,19,23,20,27,
+,Moderate worsening,1,1,1,1,0,,
+,Marked worsening,0,,0,,0,,
+,,,,,,,,
+Week 24,n,79,,81,,74,,0.618321
+,Marked improvement,0,,0,,0,,
+,Moderate improvement,1,1,1,1,0,,
+,Minimal improvement,9,11,14,17,11,15,
+,No Change,38,48,37,46,33,45,
+,Minimal worsening,28,35,27,33,25,34,
+,Moderate worsening,3,4,2,2,5,7,
+,Marked worsening,0,,0,,0,,
