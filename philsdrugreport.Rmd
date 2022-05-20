@@ -1,0 +1,98 @@
+---
+title: "Summary of Adverse Events for `r params$drug`"
+output: html_document
+params:
+  drug: Keytruda
+---
+  
+    
+***
+```{r include=FALSE}
+
+library(tidyverse)
+library(openfda)
+library(ggthemes)
+library(gt)
+
+get_adverse <- function(gender, brand_name) {
+  fda_query("/drug/event.json") %>%
+    fda_filter("patient.drug.openfda.brand_name", brand_name) %>% 
+    fda_filter("patient.patientsex", gender) %>% 
+    fda_count("patient.reaction.reactionmeddrapt.exact") %>% 
+    fda_exec()
+}
+
+total_events<- function(brand_name){
+  fda_query("/drug/event.json") %>%
+    fda_filter("patient.drug.openfda.brand_name", brand_name) %>% 
+    fda_count("patient.reaction.reactionmeddrapt.exact") %>% 
+    fda_exec()
+}
+
+serious_events<- function(brand_name){
+  fda_query("/drug/event.json") %>%
+    fda_filter("patient.drug.openfda.brand_name", brand_name) %>% 
+    fda_count("serious") %>% 
+    fda_exec()
+}
+
+drug<- params$drug
+female<-get_adverse(2, drug) %>% mutate(sex = 'female')
+male<-get_adverse(1, drug)%>% mutate(sex = 'male')
+
+all<- total_events(drug) 
+total_count<- sum(all$count)
+serious<-serious_events(drug) %>% filter(term==1) %>% pull(count)
+
+```
+
+#### Quick Overview
+
+* There have been **`r total_count` events reported**.
+* The most common adverse event was **`r all %>% filter(count == max(count)) %>% pull(term)`**
+
+
+***
+### 10 Highest Reported Adverse Events
+
+```{r echo=FALSE}
+all %>% 
+  top_n(10, count) %>%
+ggplot()+
+  geom_bar(aes(x=reorder(term, count), y=count), stat='identity', fill ="#3686D3")+
+  coord_flip()+ 
+  theme_tufte()+
+  xlab('')+
+  ylab('Events Reported')
+  
+  
+```
+
+
+***
+### Adverse Events By Sex 
+
+
+```{r echo=FALSE}
+rbind(male,female) %>%  
+  mutate(term=str_to_title(term)) %>% 
+  pivot_wider(names_from=sex, values_from=count) %>% 
+  mutate(Total=female+male) %>% 
+  top_n(10, Total) %>% 
+  gt(rowname_col="term") %>% tab_header(
+    title = md("Adverse Events"),
+    subtitle = "The top ten most reported events"
+) %>% tab_source_note("All data queried from openFDA") %>% 
+  tab_stubhead(label= 'Patient Reaction') %>% 
+  tab_spanner(label = "By sex",
+              columns=vars(female, male)) %>% 
+  tab_spanner(label= 'Total Cases',
+              columns = vars(Total)) %>% 
+    fmt_number(columns=vars(female, male, Total), sep_mark = ',', decimals=0) %>% 
+  cols_label(Total = '',
+             female = 'Female',
+             male= 'Male')
+
+```
+
+
