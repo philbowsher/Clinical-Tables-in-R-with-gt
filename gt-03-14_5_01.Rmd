@@ -44,14 +44,19 @@ xanomeline_ld_n <- xanomeline_hd_n <- 84L
 
 ## Summary table generation with **gt**
 
-This is the final table.
+This table is built up using many of the same functions we used in `gt-01-14_2_01.Rmd`. There are some notable differences though:
+
+- the `fmt_integer()` function is being used to format numeric values as integers, and, we are wrapping each value in square brackets with `pattern = "[{x}]"`
+- there are two `fmt_numeric()` statements that format p-values and they use a `rows` expression (`fisher_placebo_v_xanomeline_ld < 0.2`) to target values less than `0.2` and the `pattern = "{x}*"` will apply the asterisk to the p-value in these cases
+- there is another set of `fmt_numeric()` statements that replace values close to `1` with `>0.99` by using a method similar to the above (`rows` expression, and a `pattern`)
+- the `tab_spanner()` function is used to create spanner column labels (these are labels over top column labels)
 
 ```{r}
 tbl <-
   tbl %>%
   mutate(label = paste0("  ", label))
 
-gt_table <-
+gt_table_final <-
   tbl %>%
   gt() %>%
   tab_header(
@@ -150,8 +155,14 @@ gt_table <-
   )
 ```
 
+Writing the table to HTML can be done with `gtsave()`.
+
+```{r}
+gt_table_final %>% gtsave("html_14.5.01.html")
+```
+
 Write the **gt** table to an RTF document.
 
 ```{r}
-gt_table %>% gtsave("tbl_14.5.01.rtf")
+gt_table_final %>% gtsave("tbl_14.5.01.rtf")
 ```
