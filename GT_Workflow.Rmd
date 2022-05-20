@@ -1,0 +1,187 @@
+---
+title: "GT"
+output: html_notebook
+---
+
+With GT, it is simple to produce nice-looking display tables.
+
+Features include annotations, table element styling, and text transformations that serve to communicate the subject matter more clearly. Tables can have:
+
+A Table Header (optional; with a title and possibly a subtitle)
+
+A Stub and the Stub Head (optional; contains row labels, optionally within row groups having row group labels and possibly summary labels when a summary is present)
+
+Column Labels (contains column labels, optionally under spanner column labels)
+
+Table Body (contains columns and rows of cells)
+
+Table Footer (optional; possibly with footnotes and source notes)
+
+This first part is creating a tidy tibble to pass into GT using openFDA data.
+
+
+```{r include=FALSE}
+
+library(tidyverse)
+library(openfda)
+library(ggthemes)
+library(gt)
+
+get_adverse <- function(gender, brand_name) {
+  fda_query("/drug/event.json") %>%
+    fda_filter("patient.drug.openfda.brand_name", brand_name) %>% 
+    fda_filter("patient.patientsex", gender) %>% 
+    fda_count("patient.reaction.reactionmeddrapt.exact") %>% 
+    fda_exec()
+}
+
+total_events<- function(brand_name){
+  fda_query("/drug/event.json") %>%
+    fda_filter("patient.drug.openfda.brand_name", brand_name) %>% 
+    fda_count("patient.reaction.reactionmeddrapt.exact") %>% 
+    fda_exec()
+}
+
+serious_events<- function(brand_name){
+  fda_query("/drug/event.json") %>%
+    fda_filter("patient.drug.openfda.brand_name", brand_name) %>% 
+    fda_count("serious") %>% 
+    fda_exec()
+}
+
+drug<- "Keytruda"
+female<-get_adverse(2, drug) %>% mutate(sex = 'female')
+male<-get_adverse(1, drug)%>% mutate(sex = 'male')
+
+all<- total_events(drug) 
+total_count<- sum(all$count)
+serious<-serious_events(drug) %>% filter(term==1) %>% pull(count)
+
+```
+
+Here is a Raw gt Table
+
+```{r}
+gt_tbl <- gt(all[1:5,])
+
+# Show the gt Table
+gt_tbl
+```
+
+
+Now we will take out table and add the title and subtitle.
+
+
+
+```{r}
+gt_tbl <-
+  gt_tbl %>%
+  tab_header(
+    title = "Adverse Events",
+    subtitle = "The top five most reported events"
+  )
+
+# Show the gt Table
+gt_tbl
+```
+
+Now we are going to bold the title and subtitle.
+
+```{r}
+gt_tbl <-
+  gt_tbl %>%
+  tab_header(
+    title = md("**Adverse Events**"),
+    subtitle = md("The top ten most reported events")
+  )
+
+gt_tbl
+```
+Now we are going to add some source notes.
+
+```{r}
+gt_tbl <-
+  gt_tbl %>%
+  tab_source_note(
+    source_note = "Source: https://open.fda.gov/"
+  ) %>%
+  tab_source_note(
+    source_note = md("Reference: https://open.fda.gov/about/")
+  )
+
+# Show the gt Table
+gt_tbl
+```
+Now we are going to add a footnote only to rows 3 and 4.
+
+```{r}
+gt_tbl <-
+  gt_tbl %>%
+  tab_footnote(
+    footnote = "3rd and 4th place",
+    locations = cells_body(
+      columns = vars(term),
+      rows = 3:4)
+  )
+
+# Show the gt Table
+gt_tbl
+```
+
+Now we are going to add a footnote based on logic. Adding footnotes to the largest and smallest observations.
+
+```{r}
+
+largest <-
+  all[1:5,] %>%
+  arrange(desc(count)) %>%
+  slice(1) %>%
+  pull(term)
+
+# Create two additional footnotes, using the
+# `columns` and `where` arguments of `data_cells()`
+gt_tbl <-
+  gt_tbl %>%
+  tab_footnote(
+    footnote = md("The **largest** by term."),
+    locations = cells_body(
+      columns = vars(count),
+      rows = term == largest)
+  ) %>%
+  tab_footnote(
+    footnote = "The lowest by population.",
+    locations = cells_body(
+      columns = vars(count),
+      rows = count == min(count))
+  )
+
+# Show the gt Table
+gt_tbl
+
+
+```
+
+Here is a table with the parts combined and broken out by male and female.
+
+### Events By Sex
+
+```{r}
+rbind(male,female) %>%  
+  mutate(term=str_to_title(term)) %>% 
+  pivot_wider(names_from=sex, values_from=count) %>% 
+  mutate(Total=female+male) %>% 
+  top_n(10, Total) %>% 
+  gt(rowname_col="term") %>% tab_header(
+    title = md("Adverse Events"),
+    subtitle = "The top ten most reported events"
+) %>% tab_source_note("All data queried from openFDA") %>% 
+  tab_stubhead(label= 'Patient Reaction') %>% 
+  tab_spanner(label = "By sex",
+              columns=vars(female, male)) %>% 
+  tab_spanner(label= 'Total Cases',
+              columns = vars(Total)) %>% 
+    fmt_number(columns=vars(female, male, Total), sep_mark = ',', decimals=0) %>% 
+  cols_label(Total = '',
+             female = 'Female',
+             male= 'Male')
+```
