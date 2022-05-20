@@ -1,0 +1,62 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gt)
+library(tidyverse)
+```
+
+# The *Create Table* Family of Functions
+
+All **gt** tables begin with a call to `gt()`, where we would supply the input data table (data frame or tibble) and some basic options for creating a stub (`rowname_col`) and row groups (`groupname_col`). We can also introduce a grouped tibble (via **dplyr**’s `group_by()`) for more precise divisions of rows into row groups. The `gt_preview()` function is great for getting a nicely-formatted preview of a data table (defaulting to the first 5 rows and the last row).
+
+### `gt()`: Create a **gt** table object
+
+The `gt()` function creates a gt table object when provided with table data. Using this function is the first step in a typical **gt** workflow. Once we have the **gt** table object, we can perform styling transformations before rendering to a display table of various formats.
+
+##### EXAMPLE
+
+Create a table object using the `exibble` dataset; use the `row` and `group` columns to add a stub and row groups.
+
+```{r}
+tab_1 <- exibble %>% gt(rowname_col = "row", groupname_col = "group")
+
+tab_1
+```
+
+---------------------------------------------------------------------
+
+The resulting object can be used in transformations (with `tab_*()`, `fmt_*()`, `cols_*()` functions).
+
+```{r}
+tab_1 %>%
+  tab_header(
+    title = "Table Title",
+    subtitle = "Subtitle"
+  ) %>%
+  fmt_number(
+    columns = num,
+    decimals = 2
+  ) %>%
+  cols_label(num = "number")
+```
+
+---------------------------------------------------------------------
+
+### `gt_preview()`: Preview a **gt** table object
+
+Sometimes you may want to see just a small portion of your input data. We can use `gt_preview()` in place of `gt()` to get the first x rows of data and the last y rows of data (which can be set by the `top_n` and `bottom_n` arguments).
+
+##### EXAMPLE
+
+Use `gtcars` to create a **gt** table preview (with only a few of its columns). You'll see the first five rows and the last row.
+
+```{r}
+gtcars %>%
+  dplyr::select(mfr, model, year) %>%
+  gt_preview()
+```
+
+---------------------------------------------------------------------
