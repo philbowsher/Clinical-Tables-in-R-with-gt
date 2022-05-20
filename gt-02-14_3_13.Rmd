@@ -43,13 +43,12 @@ xanomeline_ld_n <- n_value_rows %>% pull(xanomeline_ld) %>% max()
 xanomeline_hd_n <- n_value_rows %>% pull(xanomeline_hd) %>% max()
 ```
 
-
 ## Summary table generation with **gt**
 
-This is the final table.
+This table is built up using many of the same functions we used in `gt-01-14_2_01.Rmd`.
 
 ```{r}
-gt_table <-
+gt_table_final <-
   tbl %>%
   gt() %>%
   tab_header(
@@ -94,8 +93,14 @@ gt_table <-
   )
 ```
 
+Writing the table to HTML can be done with `gtsave()`.
+
+```{r}
+gt_table_final %>% gtsave("html_14.3.13.html")
+```
+
 Write the **gt** table to an RTF document.
 
 ```{r}
-gt_table %>% gtsave("tbl_14.3.13.rtf")
+gt_table_final %>% gtsave("tbl_14.3.13.rtf")
 ```
