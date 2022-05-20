@@ -64,8 +64,6 @@ ggplot()+
   theme_tufte()+
   xlab('')+
   ylab('Events Reported')
-  
-  
 ```
 
 
@@ -85,10 +83,10 @@ rbind(male,female) %>%
 ) %>% tab_source_note("All data queried from openFDA") %>% 
   tab_stubhead(label= 'Patient Reaction') %>% 
   tab_spanner(label = "By sex",
-              columns=vars(female, male)) %>% 
+              columns = c(female, male)) %>% 
   tab_spanner(label= 'Total Cases',
-              columns = vars(Total)) %>% 
-    fmt_number(columns=vars(female, male, Total), sep_mark = ',', decimals=0) %>% 
+              columns = Total) %>% 
+    fmt_number(columns = c(female, male, Total), sep_mark = ',', decimals=0) %>% 
   cols_label(Total = '',
              female = 'Female',
              male= 'Male')
