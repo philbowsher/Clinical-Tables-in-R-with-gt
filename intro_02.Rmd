@@ -1,0 +1,363 @@
+---
+title: "Create/Modify Parts"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gt)
+library(tidyverse)
+```
+
+# The *Create/Modify Parts* Family of Functions
+
+A **gt** table can contain a few useful parts for conveying additional information. These include a header (with a titles and subtitle), a footer (with footnotes and source notes), and additional areas for labels (row group labels, column spanner labels, the stubhead label). We can modify the look of table parts more generally with `tab_options()` and perform styling on targeted table locations with `tab_style()`.
+
+### `tab_header()`: Add a table header
+
+We can add a table header to the gt table with a title and even a subtitle. A table header is an optional table part that is positioned above the column labels. We have the flexibility to use Markdown formatting for the header's title and subtitle. Furthermore, if the table is intended for HTML output, we can use HTML in either of the title or subtitle.
+
+##### EXAMPLE
+
+Use `gtcars` to create a **gt** table; add a header part to contain a `title` and `subtitle`.
+
+```{r}
+gtcars %>%
+  dplyr::select(mfr, model, msrp) %>%
+  dplyr::slice(1:5) %>%
+  gt() %>%
+  tab_header(
+    title = md("Data listing from **gtcars**"),
+    subtitle = md("`gtcars` is an R dataset")
+  )
+```
+
+---------------------------------------------------------------------
+
+### `tab_spanner()`: Add a spanner column label
+
+Set a spanner column label by mapping it to columns already in the table. This label is placed above one or more column labels, spanning the width of those columns and column labels.
+
+##### EXAMPLE
+
+Use `gtcars` to create a **gt** table; Group several columns related to car performance under a spanner column with the label `performance`.
+
+```{r}
+gtcars %>%
+  dplyr::select(
+    -mfr, -trim, bdy_style, drivetrain,
+    -drivetrain, -trsmn, -ctry_origin
+  ) %>%
+  dplyr::slice(1:8) %>%
+  gt(rowname_col = "model") %>%
+  tab_spanner(
+    label = "performance",
+    columns = c(hp, hp_rpm, trq, trq_rpm, mpg_c, mpg_h)
+  )
+```
+
+---------------------------------------------------------------------
+
+### `tab_spanner_delim()`: Create group names and column labels via delimited names
+
+This function will split selected delimited column names such that the first components (LHS) are promoted to being spanner column labels, and the secondary components (RHS) will become the column labels. Please note that reference to individual columns must continue to be the column names from the input table data (which are unique by necessity).
+
+##### EXAMPLE
+
+Use `iris` to create a gt table; split any columns that are dot-separated between column spanner labels (first part) and column labels (second part).
+
+```{r}
+iris %>%
+  dplyr::group_by(Species) %>%
+  dplyr::slice(1:4) %>%
+  gt() %>%
+  tab_spanner_delim(delim = ".")
+```
+
+---------------------------------------------------------------------
+
+### `tab_row_group()`: Add a row group
+
+Create a row group with a collection of rows. This requires specification of the rows to be included, either by supplying row labels, row indices, or through use of a select helper function like `starts_with()`.
+
+##### EXAMPLES
+
+Use `gtcars` to create a **gt** table and add two row groups with the labels: `numbered` and `NA` (a group without a title, or, the rest).
+
+```{r}
+gtcars %>%
+  dplyr::select(model, year, hp, trq) %>%
+  dplyr::slice(1:8) %>%
+  gt(rowname_col = "model") %>%
+  tab_row_group(
+    label = "numbered",
+    rows = matches("^[0-9]")
+  )
+```
+
+---------------------------------------------------------------------
+
+Use `gtcars` to create a **gt** table. Add two row groups with the labels `powerful` and `super powerful`: the distinction being `hp` lesser or greater than `600`.
+
+```{r}
+gtcars %>%
+  dplyr::select(model, year, hp, trq) %>%
+  dplyr::slice(1:8) %>%
+  gt(rowname_col = "model") %>%
+  tab_row_group(
+    label = "powerful",
+    rows = hp <= 600
+  ) %>%
+  tab_row_group(
+    label = "super powerful",
+    rows = hp > 600
+  )
+```
+
+---------------------------------------------------------------------
+
+### `tab_stubhead()`: Add label text to the stubhead
+
+Add a label to the stubhead of a **gt** table. The stubhead is the lone element that is positioned left of the column labels, and above the stub. If a stub does not exist, then there is no stubhead (so no change will be made when using this function in that case). We have the flexibility to use Markdown formatting for the stubhead label. Furthermore, if the table is intended for HTML output, we can use HTML for the stubhead label.
+
+##### EXAMPLE
+
+Use `gtcars` to create a **gt** table. Add a stubhead label to describe what is in the stub.
+
+```{r}
+gtcars %>%
+  dplyr::select(model, year, hp, trq) %>%
+  dplyr::slice(1:5) %>%
+  gt(rowname_col = "model") %>%
+  tab_stubhead(label = "car")
+```
+
+---------------------------------------------------------------------
+
+### `tab_footnote()`: Add a table footnote
+
+The `tab_footnote()` function can make it a painless process to add a footnote to a **gt** table. There are two components to a footnote: (1) a footnote mark that is attached to the targeted cell text, and (2) the footnote text (that starts with the corresponding footnote mark) that is placed in the table's footer area. Each call of `tab_footnote()` will add a different note, and one or more cells can be targeted via the location helper functions (e.g., `cells_body()`, `cells_column_labels()`, etc.).
+
+##### EXAMPLE
+
+Use `sza` to create a **gt** table; color the `sza` column using the `data_color()` function, then, add a footnote to the `sza` column label explaining what the color scale signifies.
+
+```{r}
+sza %>%
+  dplyr::filter(
+    latitude == 20 &
+      month == "jan" &
+      !is.na(sza)
+  ) %>%
+  dplyr::select(-latitude, -month) %>%
+  gt() %>%
+  data_color(
+    columns = sza,
+    colors = scales::col_numeric(
+      palette = c("white", "yellow", "navyblue"),
+      domain = c(0, 90)
+    )
+  ) %>%
+  tab_footnote(
+    footnote = "Color indicates height of sun.",
+    locations = cells_column_labels(columns = sza)
+  )
+```
+
+---------------------------------------------------------------------
+
+### `tab_source_note()`: Add a source note citation
+
+Add a source note to the footer part of the gt table. A source note is useful for citing the data included in the table. Several can be added to the footer, simply use multiple calls of `tab_source_note()` and they will be inserted in the order provided. We can use Markdown formatting for the note, or, if the table is intended for HTML output, we can include HTML formatting.
+
+##### EXAMPLE
+
+Use `gtcars` to create a **gt** table. Add a source note to the table footer that cites the data source.
+
+```{r}
+gtcars %>%
+  dplyr::select(mfr, model, msrp) %>%
+  dplyr::slice(1:5) %>%
+  gt() %>%
+  tab_source_note(
+    source_note = "From edmunds.com"
+  )
+```
+
+---------------------------------------------------------------------
+
+### `tab_style()`: Add custom styles to one or more cells
+
+With the `tab_style()` function we can target specific cells and apply styles to them. This is best done in conjunction with the helper functions `cell_text()`, `cell_fill()`, and `cell_borders()`. At present this function is focused on the application of styles for HTML output only (as such, other output formats will ignore all `tab_style()` calls). Using the aforementioned helper functions, here are some of the styles we can apply:
+
+- the background color of the cell (`cell_fill()`: `color`)
+- the cell's text color, font, and size (`cell_text()`: `color`, `font`, `size`)
+- the text style (`cell_text()`: `style`), enabling the use of italics or oblique text.
+- the text weight (`cell_text()`: `weight`), allowing the use of thin to bold text (the degree of choice is greater with variable fonts)
+- the alignment and indentation of text (`cell_text()`: `align` and `indent`)
+- the cell borders (`cell_borders()`)
+
+##### EXAMPLES
+
+Use `exibble` to create a **gt** table. Add styles that are to be applied to data cells that satisfy a condition (using `tab_style()`).
+
+```{r}
+exibble %>%
+  dplyr::select(num, currency) %>%
+  gt() %>%
+  fmt_number(
+    columns = c(num, currency),
+    decimals = 1
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "lightcyan"),
+      cell_text(weight = "bold")
+      ),
+    locations = cells_body(
+      columns = num,
+      rows = num >= 5000
+    )
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#F9E3D6"),
+      cell_text(style = "italic")
+      ),
+    locations = cells_body(
+      columns = currency,
+      rows = currency < 100
+    )
+  )
+```
+
+---------------------------------------------------------------------
+
+Use `sp500` to create a **gt** table. Color entire rows of cells based on values in a particular column.
+
+```{r}
+sp500 %>%
+  dplyr::filter(
+    date >= "2015-12-01" &
+      date <= "2015-12-15"
+  ) %>%
+  dplyr::select(-c(adj_close, volume)) %>%
+  gt() %>%
+  tab_style(
+    style = cell_fill(color = "lightgreen"),
+    locations = cells_body(
+      columns = everything(),
+      rows = close > open
+    )
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "tomato"),
+      cell_text(color = "white")
+    ),
+    locations = cells_body(
+      columns = everything(),
+      rows = open > close
+    )
+  )
+```
+
+---------------------------------------------------------------------
+
+### `tab_options()`: Modify the table output options
+
+Modify the options available in a table. These options are named by the components, the subcomponents, and the element that can adjusted.
+
+##### EXAMPLES
+
+Use `exibble` to create a **gt** table with all the main parts added; we can use this going forward to demo some `tab_options()`.
+
+```{r}
+tab_1 <- 
+  exibble %>%
+  dplyr::select(
+    -c(fctr, date, time, datetime)
+  ) %>%
+  gt(
+    rowname_col = "row",
+    groupname_col = "group"
+  ) %>%
+  tab_header(
+    title = md("Data listing from **exibble**"),
+    subtitle = md("`exibble` is an R dataset")
+  ) %>%
+  fmt_number(columns = num) %>%
+  fmt_currency(columns = currency) %>%
+  tab_footnote(
+    footnote = "Using commas for separators.",
+    locations = cells_body(
+      columns = num,
+      rows = num > 1000
+    )
+  ) %>%
+  tab_footnote(
+    footnote = "Using commas for separators.",
+    locations = cells_body(
+      columns = currency,
+      rows = currency > 1000
+    )
+  ) %>%
+  tab_footnote(
+    footnote = "Alphabetical fruit.",
+    locations = cells_column_labels(columns = char)
+  )
+```
+
+Modify the table width to `100%` (which spans the entire content width area).
+
+```{r}
+tab_1 %>%
+  tab_options(
+    table.width = pct(100)
+  )
+```
+
+---------------------------------------------------------------------
+
+Modify the table's background color to be "lightcyan".
+
+```{r}
+tab_1 %>%
+  tab_options(
+    table.background.color = "lightcyan"
+  )
+```
+
+---------------------------------------------------------------------
+
+Use letters as the marks for footnote references. Also, separate footnotes in the footer by spaces instead of newlines.
+
+```{r}
+tab_1 %>%
+  tab_options(
+    footnotes.marks = letters,
+    footnotes.multiline = FALSE
+  )
+```
+
+---------------------------------------------------------------------
+
+Change the padding of data rows to `5px`.
+
+```{r}
+tab_1 %>% tab_options(data_row.padding = px(5))
+```
+
+---------------------------------------------------------------------
+
+Reduce the size of the title and the subtitle text.
+
+```{r}
+tab_1 %>%
+  tab_options(
+    heading.title.font.size = "small",
+    heading.subtitle.font.size = "small"
+  )
+```
+
+---------------------------------------------------------------------
