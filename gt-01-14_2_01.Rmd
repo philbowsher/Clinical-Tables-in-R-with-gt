@@ -191,7 +191,7 @@ gt_table <-
   )
 ```
 
-This is the final table.
+Putting it all together, you can write the table as one expression that uses `%>%` to link together the various directives.
 
 ```{r}
 gt_table_final <-
@@ -244,7 +244,7 @@ gt_table_final <-
 Writing the table to HTML can be done with `gtsave()`.
 
 ```{r}
-gt_table_final %>% gtsave("table.html")
+gt_table_final %>% gtsave("html_14.2.01.html")
 ```
 
 Write the **gt** table to an RTF document.
