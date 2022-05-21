@@ -1,0 +1,583 @@
+---
+title: <span style="color:#000000"><strong>Clinical Tables in R with <span style="color:#ff9900">GT</strong></span>
+subtitle:  <span style="color:#FFFFFF">github:rich-iannone github:philbowsher</span>
+output:
+  xaringan::moon_reader:
+    css: "include/rstudio.css"
+    nature:
+      countIncrementalSlides: yes
+      highlightLines: yes
+      highlightStyle: github
+      ratio: 16:9
+resource_files:
+  - include
+  - images
+---
+
+
+```{r, include=FALSE}
+rmarkdown::output_metadata$set(
+  rsc_output_files = list.files("images", recursive = TRUE, full.names = TRUE)
+)
+```
+
+
+class: subtitle-slide, white, middle, center
+
+# Part 1
+INTRO
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# Thank you
+[Richard Iannone](https://github.com/rich-iannone/),
+[William Noble](https://www.linkedin.com/in/william-noble-8987a452/),
+[Michael Stackhouse](https://www.linkedin.com/in/michael-s-stackhouse/),
+[Alexandra Lauer](https://www.linkedin.com/in/alexandra-lauer-851753143/),
+[Eric Simms](https://www.linkedin.com/in/eric-simms-3897004/),
+[Hengwei Liu](https://www.linkedin.com/in/hengwei-liu-20bb10189/)
+
+---
+
+class: subtitle-slide, white, middle, center
+
+# I have always been inspired by those who can capture the landscape with a minimum of brushstrokes
+
+---
+
+class: subtitle-slide, white, middle, center
+
+# The “pit of success”...is the philosophy that users shouldn’t have to strive and struggle to do the right thing. They should be able to fall into good habits almost by accident...
+
+http://varianceexplained.org/r/sliced-ml/
+
+---
+
+
+
+
+class: panel-narrow-slide, left
+
+# Managing Change
+- Macros
+- PROC REPORT, PROC TABULATE
+- ODS
+- [Roche diffdf](https://user2019.r-project.org/static/pres/lt252425.pdf)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Slides and Examples
+
+- [Github](https://github.com/philbowsher/Clinical-Tables-in-R-with-gt)
+- [RStudio Cloud](https://rstudio.cloud/project/779965)
+- Soon to be pharma page
+
+---
+
+class: panel-narrow-slide, left
+
+# Tables in Clinical Study Reports
+
+- E3 Reporting
+- Title and footnotes are integral parts of Tables, Figures or Listings (TFLs) in Clinical Study Reports (CSRs) and Case Report Tabulation (CRT)
+- Titles and footnotes are created or typed in a requirement document such as Statistical Analyses Plan (SAP). 
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# Main Topic of Interest for Pharma
+
+- [rtf2](https://github.com/DanniYuGithub/RTF2/)
+- Tables with complex headers
+- RMD, HTML, [Interactivity](https://advance.phuse.global/pages/viewpage.action?pageId=327872)
+- [Noted Issues from R/pharma workshop](https://github.com/rstudio/gt/issues/653)
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# But Why Another Table Package?
+
+- [Listing of leading table-making R packages](https://gt.rstudio.com/)
+- [How to Make Beautiful Tables in R](https://rfortherestofus.com/2019/11/how-to-make-beautiful-tables-in-r/)
+- Different Pharma have unique formatting requirements
+- General & flexible R package to customize table layout
+- RStudio, Full time OS package developers maintainers
+
+---
+
+
+
+
+
+class: panel-narrow-slide, left
+
+# Workshop Learning Objectives
+
+- GT
+- Environment
+- CDISC Pilot
+- How to get data
+- GT clinical best practices
+- GT in Shiny
+
+---
+
+class: panel-narrow-slide, left
+
+# Workshop Communication
+
+- Zoom Chat
+- Slido
+- Polls
+- github
+- You will not learn all of R today
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# Your Turn
+
+- Form groups of 2-4 people
+- Introduce yourself to your group members
+- Who you are
+- What you do with data
+- How long you have been using R
+
+---
+
+
+
+
+
+class: subtitle-slide, white, middle, center
+
+# http://rstd.io/phil-me-out
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# Setup
+- https://github.com/sol-eng/classroom-getting-started
+- http://rstd.io/class
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# GT
+- Intro
+- https://gt.rstudio.com/
+- [RStudio Cloud](https://rstudio.cloud/project/779965)
+- Demo
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+
+# Basic Example
+
+```
+devtools::install_github("rstudio/gt")
+library(gt)
+
+islands_tbl <-
+  dplyr::tibble(
+    name = names(islands),
+    size = islands
+  ) %>%
+  dplyr::arrange(desc(size)) %>%
+  dplyr::slice(1:10)
+  
+gt_tbl <- gt(data = islands_tbl) %>%  
+  tab_header(
+    title = "Large Landmasses of the World",
+    subtitle = "The top ten largest are presented"
+  ) %>%
+  tab_source_note(
+    source_note = "Source: The World Almanac and Book of Facts, 1975, page 406."
+  ) %>%
+  tab_source_note(
+    source_note = md("Reference: McNeil, D. R. (1977) *Interactive Data Analysis*. Wiley.")
+  )
+
+gt_tbl
+```
+
+---
+
+
+
+
+class: panel-narrow-slide, left
+
+# After the workshop, go here
+- https://rstudio.cloud/project/779965
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Learning Resources & Books…
+- [GT Presentations](https://github.com/rich-iannone/presentations)
+- [GT cookbook](https://themockup.blog/static/resources/gt-cookbook.html)
+- [GT cookbook advanced](https://themockup.blog/static/resources/gt-cookbook-advanced.html)
+- [Shiny](https://mastering-shiny.org/)
+- [r4ds](http://r4ds.had.co.nz) & https://rstudio.cloud/
+- [ggplot2](https://r-graphics.org/)
+- [Stats](http://www-bcf.usc.edu/~gareth/ISL/)
+- [Modeling](http://appliedpredictivemodeling.com/)
+- [R Markdown](https://bookdown.org/yihui/rmarkdown/)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Break Time
+- Fun Video
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# Part 2
+Hands on Workflow & GT Intro
+
+---
+
+
+class: panel-narrow-slide, left
+
+# R Script, RMD, Notebook or Quarto?
+- Notebook Intro
+- Living Document
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Openfda
+- https://open.fda.gov/
+- https://github.com/rOpenHealth/openfda
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# GT_Workflow.Rmd
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# philsdrugreport.Rmd
+Take your R code and create a report
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# 1-dashboard.Rmd
+Update with Flexdashboard
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Moderate Complexity OpenFDA Examples
+- Adverse Events
+- [Notebook](https://colorado.rstudio.com/rsc/content/6848/GT_Workflow.nb.html)
+- [Dashobard](https://colorado.rstudio.com/rsc/content/6849/1-dashboard.html)
+- Demo
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+Basic Example
+
+```{r include=FALSE, message = FALSE, warning = FALSE}
+
+library(tidyverse)
+library(openfda)
+library(ggthemes)
+library(gt)
+get_adverse <- function(gender, brand_name) {
+  fda_query("/drug/event.json") %>%
+    fda_filter("patient.drug.openfda.brand_name", brand_name) %>% 
+    fda_filter("patient.patientsex", gender) %>% 
+    fda_count("patient.reaction.reactionmeddrapt.exact") %>% 
+    fda_exec()
+}
+total_events<- function(brand_name){
+  fda_query("/drug/event.json") %>%
+    fda_filter("patient.drug.openfda.brand_name", brand_name) %>% 
+    fda_count("patient.reaction.reactionmeddrapt.exact") %>% 
+    fda_exec()
+}
+serious_events<- function(brand_name){
+  fda_query("/drug/event.json") %>%
+    fda_filter("patient.drug.openfda.brand_name", brand_name) %>% 
+    fda_count("serious") %>% 
+    fda_exec()
+}
+drug<- "Keytruda"
+female<-get_adverse(2, drug) %>% mutate(sex = 'female')
+male<-get_adverse(1, drug)%>% mutate(sex = 'male')
+all<- total_events(drug) 
+total_count<- sum(all$count)
+serious<-serious_events(drug) %>% filter(term==1) %>% pull(count)
+
+
+```
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+rbind(male,female) %>%  
+  mutate(term=str_to_title(term)) %>% 
+  pivot_wider(names_from=sex, values_from=count) %>% 
+  mutate(Total=female+male) %>% 
+  top_n(3, Total) %>% 
+  gt(rowname_col="term") %>% tab_header(
+    title = md("Adverse Events"),
+    subtitle = "The top three most reported events"
+) %>% tab_source_note("All data queried from openFDA") %>% 
+  tab_stubhead(label= 'Patient Reaction') %>% 
+  tab_spanner(label = "By sex",
+              columns = c(female, male)) %>% 
+  tab_spanner(label= 'Total Cases',
+              columns = Total) %>% 
+    fmt_number(columns = c(female, male, Total), sep_mark = ',', decimals=0) %>% 
+  cols_label(Total = '',
+             female = 'Female',
+             male= 'Male') 
+```
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# R FDA Reporting
+- [VENCLEXTA](https://www.accessdata.fda.gov/drugsatfda_docs/nda/2016/208573Orig1s000ClinPharmR.pdf)
+- [Cinvanti](https://www.accessdata.fda.gov/drugsatfda_docs/nda/2017/209296Orig1s000ClinPharmR.pdf)
+- [Moderna Vaccine](https://covid19crc.org/wp-content/uploads/2020/09/mRNA-1273-P301-Protocol-2020.pdf)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Sample Clinical Data
+- [CDISC Data](https://github.com/phuse-org/phuse-scripts/tree/master/data)
+- [CDISC Data RHO](https://rhoinc.github.io/data-library/)
+- [safetyData](https://github.com/SafetyGraphics/safetyData/tree/main/data)
+- [rtables](https://www.rdocumentation.org/packages/rtables/versions/0.4.0/topics/ex_adsl)
+- [ML](https://rviews.rstudio.com/2022/04/19/mldatar-real-world-datasets-for-machine-learning-applications/)
+- [ynthea](https://github.com/synthetichealth/synthea)
+- [NHSRdatasets](https://cran.r-project.org/web/packages/NHSRdatasets/index.html)
+- [healthyR](https://github.com/spsanderson/healthyR.data/)
+- openfda
+- [pk/pd data](nlmixr)
+
+
+---
+
+class: panel-narrow-slide, left
+
+# Data Prep
+- dplyr
+- tidyr
+- admiral
+- Tplyr
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# SDTM/ADaM Pilot Project
+- [Atorus Research](https://atorusresearch.com/)
+- [Pilot Submission Package](https://www.cdisc.org/sdtmadam-pilot-project)
+- Xanomeline Transdermal
+- Therapeutic System (TTS) in Patients with Mild to Moderate Alzheimer’s Disease
+
+---
+
+class: panel-narrow-slide, left
+
+# Data Prep Worklow
+- [Sample Workflow](https://github.com/philbowsher/Clinical-Tables-in-R-with-gt/blob/master/data_workflow/t-14-2-01-data.R)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Your Turn
+- Run t-14-2-01-data.R
+- final_14201.csv
+
+---
+
+
+
+class: subtitle-slide, white, middle, center
+
+# Part 3
+Clinical GT Tables
+
+---
+
+
+
+
+class: panel-narrow-slide, left
+
+# Let's build our first Clinical GT Table
+- Data Prep mostly stays out of GT
+- gt-01-14_2_01.Rmd
+- tbl_14.2.01.rtf
+
+---
+
+
+class: panel-narrow-slide, left
+
+# We are going to go section by section to understand the parts
+- Run each section & compare the output
+- gt-01-14_2_01.Rmd
+- tbl_14.2.01.rtf
+
+---
+
+
+
+class: panel-narrow-slide, left
+# HTML Version of Table 14.2.01
+- [Summary of Demographic and Baseline Characteristics](https://colorado.rstudio.com/rsc/content/ed78ff54-52f3-4d55-9d23-9e8ff553ddb0/html_14.2.01.html)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Let's build our Second Clinical GT Table
+- This time it is all together
+- gt-02-14_3_13.Rmd
+- tbl_14.3.13.rtf
+
+---
+
+
+class: panel-narrow-slide, left
+# HTML Version of Table Table 14.3.13
+- [CIBIC+ - Categorical Analysis - LOCF](https://colorado.rstudio.com/rsc/content/6a4d22c1-b3c4-4718-b70e-371c25b16c8f/html_14.3.13.html)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Let's build our Third Clinical GT Table
+- This time it is all together
+- gt-03-14_5_01.Rmd
+- tbl_14.5.01.rtf
+
+---
+
+
+class: panel-narrow-slide, left
+# HTML Version of Table Table Table 14-5.01
+- [Incidence of Treatment Emergent Adverse Events by Treatment Group](https://colorado.rstudio.com/rsc/content/c0c43a80-c3f2-417a-914d-9b1a19fad937/html_14.5.01.html)
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# Part 4
+Future Ideas & Considerations
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Shiny
+- [The Future of Clinical TFLs is Interactive . . .](https://williamnoble.shinyapps.io/the_future_of_clinical_tfls/)
+- [Shiny for Submissions Task Force](https://learn.rinpharma.com/shiny4submissions.html)
+- [FDA Shiny](https://www.cdisc.org/restricted/2019-japan-interchange-presentations)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Shiny Example
+- [TFL Shiny Generator](https://shiny.rstudio.com/gallery/download-knitr-reports.html)
+- [Code](https://github.com/rstudio/shiny-examples/tree/main/016-knitr-pdf)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Publishing
+- How do I share the rtf, html?
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Collaboration
+
+.pull-left[
+  # [R in Pharma](https://rinpharma.com)
+  ]
+.pull-right[ 
+  # [Shiny for Submissions](https://learn.rinpharma.com/shiny4submissions.html)
+]
+
+---
+
+class: subtitle-slide, white, middle, center
+
+# Questions
+phil@rstudio.com
+
+---

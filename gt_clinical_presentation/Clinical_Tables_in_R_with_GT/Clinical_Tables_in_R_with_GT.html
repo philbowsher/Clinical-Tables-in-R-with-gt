@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Clinical Tables in R with GT</title>
+    <meta charset="utf-8" />
+    <script src="Clinical_Tables_in_R_with_GT_files/header-attrs-2.10/header-attrs.js"></script>
+    <link rel="stylesheet" href="include/rstudio.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <span style="color:#000000"><strong>Clinical Tables in R with <span style="color:#ff9900">GT</strong></span>
+## <span style="color:#FFFFFF">github:rich-iannone github:philbowsher</span>
+
+---
+
+
+
+
+
+
+class: subtitle-slide, white, middle, center
+
+# Part 1
+INTRO
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# Thank you
+[Richard Iannone](https://github.com/rich-iannone/),
+[William Noble](https://www.linkedin.com/in/william-noble-8987a452/),
+[Michael Stackhouse](https://www.linkedin.com/in/michael-s-stackhouse/),
+[Alexandra Lauer](https://www.linkedin.com/in/alexandra-lauer-851753143/),
+[Eric Simms](https://www.linkedin.com/in/eric-simms-3897004/),
+[Hengwei Liu](https://www.linkedin.com/in/hengwei-liu-20bb10189/)
+
+---
+
+class: subtitle-slide, white, middle, center
+
+# I have always been inspired by those who can capture the landscape with a minimum of brushstrokes
+
+---
+
+class: subtitle-slide, white, middle, center
+
+# The “pit of success”...is the philosophy that users shouldn’t have to strive and struggle to do the right thing. They should be able to fall into good habits almost by accident...
+
+http://varianceexplained.org/r/sliced-ml/
+
+---
+
+
+
+
+class: panel-narrow-slide, left
+
+# Managing Change
+- Macros
+- PROC REPORT, PROC TABULATE
+- ODS
+- [Roche diffdf](https://user2019.r-project.org/static/pres/lt252425.pdf)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Slides and Examples
+
+- [Github](https://github.com/philbowsher/Clinical-Tables-in-R-with-gt)
+- [RStudio Cloud](https://rstudio.cloud/project/779965)
+- Soon to be pharma page
+
+---
+
+class: panel-narrow-slide, left
+
+# Tables in Clinical Study Reports
+
+- E3 Reporting
+- Title and footnotes are integral parts of Tables, Figures or Listings (TFLs) in Clinical Study Reports (CSRs) and Case Report Tabulation (CRT)
+- Titles and footnotes are created or typed in a requirement document such as Statistical Analyses Plan (SAP). 
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# Main Topic of Interest for Pharma
+
+- [rtf2](https://github.com/DanniYuGithub/RTF2/)
+- Tables with complex headers
+- RMD, HTML, [Interactivity](https://advance.phuse.global/pages/viewpage.action?pageId=327872)
+- [Noted Issues from R/pharma workshop](https://github.com/rstudio/gt/issues/653)
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# But Why Another Table Package?
+
+- [Listing of leading table-making R packages](https://gt.rstudio.com/)
+- [How to Make Beautiful Tables in R](https://rfortherestofus.com/2019/11/how-to-make-beautiful-tables-in-r/)
+- Different Pharma have unique formatting requirements
+- General &amp; flexible R package to customize table layout
+- RStudio, Full time OS package developers maintainers
+
+---
+
+
+
+
+
+class: panel-narrow-slide, left
+
+# Workshop Learning Objectives
+
+- GT
+- Environment
+- CDISC Pilot
+- How to get data
+- GT clinical best practices
+- GT in Shiny
+
+---
+
+class: panel-narrow-slide, left
+
+# Workshop Communication
+
+- Zoom Chat
+- Slido
+- Polls
+- github
+- You will not learn all of R today
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# Your Turn
+
+- Form groups of 2-4 people
+- Introduce yourself to your group members
+- Who you are
+- What you do with data
+- How long you have been using R
+
+---
+
+
+
+
+
+class: subtitle-slide, white, middle, center
+
+# http://rstd.io/phil-me-out
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# Setup
+- https://github.com/sol-eng/classroom-getting-started
+- http://rstd.io/class
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# GT
+- Intro
+- https://gt.rstudio.com/
+- [RStudio Cloud](https://rstudio.cloud/project/779965)
+- Demo
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+
+# Basic Example
+
+```
+devtools::install_github("rstudio/gt")
+library(gt)
+
+islands_tbl &lt;-
+  dplyr::tibble(
+    name = names(islands),
+    size = islands
+  ) %&gt;%
+  dplyr::arrange(desc(size)) %&gt;%
+  dplyr::slice(1:10)
+  
+gt_tbl &lt;- gt(data = islands_tbl) %&gt;%  
+  tab_header(
+    title = "Large Landmasses of the World",
+    subtitle = "The top ten largest are presented"
+  ) %&gt;%
+  tab_source_note(
+    source_note = "Source: The World Almanac and Book of Facts, 1975, page 406."
+  ) %&gt;%
+  tab_source_note(
+    source_note = md("Reference: McNeil, D. R. (1977) *Interactive Data Analysis*. Wiley.")
+  )
+
+gt_tbl
+```
+
+---
+
+
+
+
+class: panel-narrow-slide, left
+
+# After the workshop, go here
+- https://rstudio.cloud/project/779965
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Learning Resources &amp; Books…
+- [GT Presentations](https://github.com/rich-iannone/presentations)
+- [GT cookbook](https://themockup.blog/static/resources/gt-cookbook.html)
+- [GT cookbook advanced](https://themockup.blog/static/resources/gt-cookbook-advanced.html)
+- [Shiny](https://mastering-shiny.org/)
+- [r4ds](http://r4ds.had.co.nz) &amp; https://rstudio.cloud/
+- [ggplot2](https://r-graphics.org/)
+- [Stats](http://www-bcf.usc.edu/~gareth/ISL/)
+- [Modeling](http://appliedpredictivemodeling.com/)
+- [R Markdown](https://bookdown.org/yihui/rmarkdown/)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Break Time
+- Fun Video
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# Part 2
+Hands on Workflow &amp; GT Intro
+
+---
+
+
+class: panel-narrow-slide, left
+
+# R Script, RMD, Notebook or Quarto?
+- Notebook Intro
+- Living Document
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Openfda
+- https://open.fda.gov/
+- https://github.com/rOpenHealth/openfda
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# GT_Workflow.Rmd
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# philsdrugreport.Rmd
+Take your R code and create a report
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# 1-dashboard.Rmd
+Update with Flexdashboard
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Moderate Complexity OpenFDA Examples
+- Adverse Events
+- [Notebook](https://colorado.rstudio.com/rsc/content/6848/GT_Workflow.nb.html)
+- [Dashobard](https://colorado.rstudio.com/rsc/content/6849/1-dashboard.html)
+- Demo
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+Basic Example
+
+
+
+<div id="rgphabxyji" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#rgphabxyji .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rgphabxyji .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rgphabxyji .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rgphabxyji .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rgphabxyji .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rgphabxyji .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rgphabxyji .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rgphabxyji .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rgphabxyji .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rgphabxyji .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rgphabxyji .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rgphabxyji .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rgphabxyji .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rgphabxyji .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rgphabxyji .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rgphabxyji .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rgphabxyji .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#rgphabxyji .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rgphabxyji .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#rgphabxyji .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rgphabxyji .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rgphabxyji .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rgphabxyji .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rgphabxyji .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rgphabxyji .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#rgphabxyji .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rgphabxyji .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#rgphabxyji .gt_left {
+  text-align: left;
+}
+
+#rgphabxyji .gt_center {
+  text-align: center;
+}
+
+#rgphabxyji .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rgphabxyji .gt_font_normal {
+  font-weight: normal;
+}
+
+#rgphabxyji .gt_font_bold {
+  font-weight: bold;
+}
+
+#rgphabxyji .gt_font_italic {
+  font-style: italic;
+}
+
+#rgphabxyji .gt_super {
+  font-size: 65%;
+}
+
+#rgphabxyji .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style>Adverse Events</th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>The top three most reported events</th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1">Patient Reaction</th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2">
+        <span class="gt_column_spanner">By sex</span>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="1">
+        <span class="gt_column_spanner">Total Cases</span>
+      </th>
+    </tr>
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Female</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">Male</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1"></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left gt_stub">Malignant Neoplasm Progression</td>
+<td class="gt_row gt_right">1,894</td>
+<td class="gt_row gt_right">2,998</td>
+<td class="gt_row gt_right">4,892</td></tr>
+    <tr><td class="gt_row gt_left gt_stub">Death</td>
+<td class="gt_row gt_right">987</td>
+<td class="gt_row gt_right">1,441</td>
+<td class="gt_row gt_right">2,428</td></tr>
+    <tr><td class="gt_row gt_left gt_stub">Fatigue</td>
+<td class="gt_row gt_right">1,034</td>
+<td class="gt_row gt_right">847</td>
+<td class="gt_row gt_right">1,881</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" colspan="4">All data queried from openFDA</td>
+    </tr>
+  </tfoot>
+  
+</table>
+</div>
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# R FDA Reporting
+- [VENCLEXTA](https://www.accessdata.fda.gov/drugsatfda_docs/nda/2016/208573Orig1s000ClinPharmR.pdf)
+- [Cinvanti](https://www.accessdata.fda.gov/drugsatfda_docs/nda/2017/209296Orig1s000ClinPharmR.pdf)
+- [Moderna Vaccine](https://covid19crc.org/wp-content/uploads/2020/09/mRNA-1273-P301-Protocol-2020.pdf)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Sample Clinical Data
+- [CDISC Data](https://github.com/phuse-org/phuse-scripts/tree/master/data)
+- [CDISC Data RHO](https://rhoinc.github.io/data-library/)
+- [safetyData](https://github.com/SafetyGraphics/safetyData/tree/main/data)
+- [rtables](https://www.rdocumentation.org/packages/rtables/versions/0.4.0/topics/ex_adsl)
+- [ML](https://rviews.rstudio.com/2022/04/19/mldatar-real-world-datasets-for-machine-learning-applications/)
+- [ynthea](https://github.com/synthetichealth/synthea)
+- [NHSRdatasets](https://cran.r-project.org/web/packages/NHSRdatasets/index.html)
+- [healthyR](https://github.com/spsanderson/healthyR.data/)
+- openfda
+- [pk/pd data](nlmixr)
+
+
+---
+
+class: panel-narrow-slide, left
+
+# Data Prep
+- dplyr
+- tidyr
+- admiral
+- Tplyr
+
+---
+
+
+
+class: panel-narrow-slide, left
+
+# SDTM/ADaM Pilot Project
+- [Atorus Research](https://atorusresearch.com/)
+- [Pilot Submission Package](https://www.cdisc.org/sdtmadam-pilot-project)
+- Xanomeline Transdermal
+- Therapeutic System (TTS) in Patients with Mild to Moderate Alzheimer’s Disease
+
+---
+
+class: panel-narrow-slide, left
+
+# Data Prep Worklow
+- [Sample Workflow](https://github.com/philbowsher/Clinical-Tables-in-R-with-gt/blob/master/data_workflow/t-14-2-01-data.R)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Your Turn
+- Run t-14-2-01-data.R
+- final_14201.csv
+
+---
+
+
+
+class: subtitle-slide, white, middle, center
+
+# Part 3
+Clinical GT Tables
+
+---
+
+
+
+
+class: panel-narrow-slide, left
+
+# Let's build our first Clinical GT Table
+- Data Prep mostly stays out of GT
+- gt-01-14_2_01.Rmd
+- tbl_14.2.01.rtf
+
+---
+
+
+class: panel-narrow-slide, left
+
+# We are going to go section by section to understand the parts
+- Run each section &amp; compare the output
+- gt-01-14_2_01.Rmd
+- tbl_14.2.01.rtf
+
+---
+
+
+
+class: panel-narrow-slide, left
+# HTML Version of Table 14.2.01
+- [Summary of Demographic and Baseline Characteristics](https://colorado.rstudio.com/rsc/content/ed78ff54-52f3-4d55-9d23-9e8ff553ddb0/html_14.2.01.html)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Let's build our Second Clinical GT Table
+- This time it is all together
+- gt-02-14_3_13.Rmd
+- tbl_14.3.13.rtf
+
+---
+
+
+class: panel-narrow-slide, left
+# HTML Version of Table Table 14.3.13
+- [CIBIC+ - Categorical Analysis - LOCF](https://colorado.rstudio.com/rsc/content/6a4d22c1-b3c4-4718-b70e-371c25b16c8f/html_14.3.13.html)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Let's build our Third Clinical GT Table
+- This time it is all together
+- gt-03-14_5_01.Rmd
+- tbl_14.5.01.rtf
+
+---
+
+
+class: panel-narrow-slide, left
+# HTML Version of Table Table Table 14-5.01
+- [Incidence of Treatment Emergent Adverse Events by Treatment Group](https://colorado.rstudio.com/rsc/content/c0c43a80-c3f2-417a-914d-9b1a19fad937/html_14.5.01.html)
+
+---
+
+
+class: subtitle-slide, white, middle, center
+
+# Part 4
+Future Ideas &amp; Considerations
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Shiny
+- [The Future of Clinical TFLs is Interactive . . .](https://williamnoble.shinyapps.io/the_future_of_clinical_tfls/)
+- [Shiny for Submissions Task Force](https://learn.rinpharma.com/shiny4submissions.html)
+- [FDA Shiny](https://www.cdisc.org/restricted/2019-japan-interchange-presentations)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Shiny Example
+- [TFL Shiny Generator](https://shiny.rstudio.com/gallery/download-knitr-reports.html)
+- [Code](https://github.com/rstudio/shiny-examples/tree/main/016-knitr-pdf)
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Publishing
+- How do I share the rtf, html?
+
+---
+
+
+class: panel-narrow-slide, left
+
+# Collaboration
+
+.pull-left[
+  # [R in Pharma](https://rinpharma.com)
+  ]
+.pull-right[ 
+  # [Shiny for Submissions](https://learn.rinpharma.com/shiny4submissions.html)
+]
+
+---
+
+class: subtitle-slide, white, middle, center
+
+# Questions
+phil@rstudio.com
+
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"countIncrementalSlides": true,
+"highlightLines": true,
+"highlightStyle": "github",
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
