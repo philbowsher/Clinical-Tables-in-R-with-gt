@@ -5,7 +5,7 @@ account: phil
 server: colorado.rstudio.com
 hostUrl: https://colorado.rstudio.com/rsc/__api__
 appId: 11414
-bundleId: 56700
+bundleId: 56729
 url: https://colorado.rstudio.com/rsc/Clinical_Tables_in_R_with_GT/
-when: 1653145551.16425
-lastSyncTime: 1653145551.16426
+when: 1653229117.88089
+lastSyncTime: 1653229117.8809
