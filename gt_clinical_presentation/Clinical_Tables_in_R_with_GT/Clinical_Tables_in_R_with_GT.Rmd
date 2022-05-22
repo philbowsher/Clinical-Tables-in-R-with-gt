@@ -200,7 +200,7 @@ class: panel-narrow-slide, left
 # Basic Example
 
 ```
-devtools::install_github("rstudio/gt")
+# devtools::install_github("rstudio/gt")
 library(gt)
 
 islands_tbl <-
